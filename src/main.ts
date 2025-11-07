@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { config } from 'dotenv';
 import { validateEnv } from './config/env.schema';
 import { Logger } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -22,6 +23,17 @@ async function bootstrap() {
   }
 
   const app = await NestFactory.create(AppModule);
+
+  // Swagger Configuration
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Book Management System API')
+    .setDescription('API documentation for Book Management System')
+    .setVersion('1.0')
+    .addTag('authors')
+    .build();
+  
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('swagger', app, document);
 
   const port = process.env.APP_PORT || 3000;
   const host = process.env.APP_HOST || 'localhost';
