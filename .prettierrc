@@ -7,15 +7,5 @@
   "endOfLine": "auto",
   "bracketSpacing": true,
   "jsxSingleQuote": false,
-  "printWidth": 120,
-  "arrowParens": "avoid",
-  "rangeStart": 0,
-  "overrides": [
-    {
-      "files": "*.{js,jsx,ts,tsx}",
-      "options": {
-        "parser": "babel"
-      }
-    }
-  ]
+  "printWidth": 120
 }
