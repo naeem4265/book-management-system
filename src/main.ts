@@ -37,7 +37,6 @@ async function bootstrap() {
     .setTitle('Book Management System API')
     .setDescription('API documentation for Book Management System')
     .setVersion('1.0')
-    .addTag('authors')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

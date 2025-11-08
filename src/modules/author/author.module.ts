@@ -9,6 +9,6 @@ import { AuthorRepository } from './repositories/author.repository';
   imports: [TypeOrmModule.forFeature([Author])],
   controllers: [AuthorController],
   providers: [AuthorService, AuthorRepository],
-  exports: [AuthorService],
+  exports: [AuthorService, AuthorRepository],
 })
 export class AuthorModule {}

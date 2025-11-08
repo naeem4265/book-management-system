@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Book } from '../../book/entities/book.entity';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('authors')
 export class Author {
@@ -16,6 +17,9 @@ export class Author {
 
   @Column({ nullable: true })
   birthDate?: Date;
+
+  @OneToMany(() => Book, (book) => book.author)
+  books: Book[];
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

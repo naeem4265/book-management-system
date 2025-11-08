@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthorModule } from './modules/author/author.module';
+import { BookModule } from './modules/book/book.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getTypeOrmConfig } from '../config/database.config';
 import { envValidationSchema } from '../config/env.schema';
@@ -20,6 +21,7 @@ import { envValidationSchema } from '../config/env.schema';
       useFactory: getTypeOrmConfig,
     }),
     AuthorModule,
+    BookModule,
   ],
   controllers: [AppController],
   providers: [AppService],
