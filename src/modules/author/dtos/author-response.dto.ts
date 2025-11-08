@@ -14,7 +14,7 @@ export class AuthorResponseDto {
   bio: string;
 
   @Expose()
-  dob: Date;
+  birthDate: Date;
 
   @Expose()
   createdAt: Date;

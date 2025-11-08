@@ -4,6 +4,8 @@ import { AuthorRepository } from '../repositories/author.repository';
 import { AuthorResponseDto } from '../dtos/author-response.dto';
 import { plainToInstance } from 'class-transformer';
 import { UpdateAuthorDto } from '../dtos/update-author.dto';
+import { PaginationParamsDto } from 'src/common/dto/pagination-params.dto';
+import { PaginatedResult } from 'src/common/types/pagination.types';
 
 @Injectable()
 export class AuthorService {
@@ -28,16 +30,19 @@ export class AuthorService {
     }
   }
 
-  async getAllAuthors(): Promise<AuthorResponseDto[]> {
+  async getAllAuthors(paginationQuery: PaginationParamsDto): Promise<PaginatedResult<AuthorResponseDto>> {
     this.logger.log('Getting all authors');
 
     try {
-      const authors = await this.authorRepository.getAllAuthors();
-      this.logger.log('Authors retrieved successfully: ', authors.length);
+      const { data, pagination } = await this.authorRepository.getAllAuthors(paginationQuery);
 
-      return plainToInstance(AuthorResponseDto, authors, {
+      this.logger.log(`Retrieved ${data.length} of ${pagination.totalItems} authors`);
+
+      const authors = plainToInstance(AuthorResponseDto, data, {
         excludeExtraneousValues: true,
       });
+
+      return { data: authors, pagination };
     } catch (error) {
       this.logger.error('Error getting authors', error);
       throw error;

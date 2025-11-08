@@ -10,11 +10,13 @@ import {
   Patch,
   Delete,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { AuthorService } from '../services/author.service';
 import { CreateAuthorDto } from '../dtos/create-author.dto';
 import { UpdateAuthorDto } from '../dtos/update-author.dto';
-import { ApiOperation, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBody, ApiResponse, ApiTags, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { PaginationParamsDto } from 'src/common/dto/pagination-params.dto';
 @ApiTags('Authors')
 @Controller('authors')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -31,11 +33,11 @@ export class AuthorController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all authors' })
+  @ApiOperation({ summary: 'Get all authors with pagination' })
   @ApiResponse({ status: HttpStatus.OK })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
-  async getAllAuthors() {
-    return this.authorService.getAllAuthors();
+  async getAllAuthors(@Query() paginationQuery: PaginationParamsDto) {
+    return this.authorService.getAllAuthors(paginationQuery);
   }
 
   @Get(':id')
