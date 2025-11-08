@@ -12,4 +12,12 @@ export class AuthorRepository extends Repository<Author> {
     const author = this.create(createAuthorDto);
     return this.save(author);
   }
+
+  async getAllAuthors(): Promise<Author[]> {
+    return this.find();
+  }
+
+  async getAuthorById(id: string): Promise<Author | null> {
+    return this.findOneBy({ id });
+  }
 }
