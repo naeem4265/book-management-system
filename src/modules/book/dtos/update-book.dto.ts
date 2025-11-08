@@ -1,24 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsISBN, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsDate, IsISBN, IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class CreateBookDto {
+export class UpdateBookDto {
   @ApiProperty({
     example: 'The Great Novel',
     description: 'Title of the book',
-    required: true,
+    required: false,
   })
   @IsString()
-  @IsNotEmpty()
-  title: string;
+  @IsOptional()
+  title?: string;
 
   @ApiProperty({
     example: '978-0-306-40615-7',
     description: 'ISBN of the book',
-    required: true,
+    required: false,
   })
   @IsISBN()
-  @IsNotEmpty()
-  isbn: string;
+  @IsOptional()
+  isbn?: string;
 
   @ApiProperty({
     example: '2024-01-01',
@@ -29,7 +29,7 @@ export class CreateBookDto {
   publishedDate?: Date;
 
   @ApiProperty({
-    example: 'Fantasy',
+    example: 'Sci-Fi',
     description: 'Genre of the book',
     required: false,
   })
@@ -39,10 +39,10 @@ export class CreateBookDto {
 
   @ApiProperty({
     example: '123e4567-e89b-12d3-a456-426614174000',
-    description: 'ID of the author (must be a valid UUID)',
-    required: true,
+    description: 'ID of the author',
+    required: false,
   })
   @IsUUID()
-  @IsNotEmpty()
-  authorId: string;
+  @IsOptional()
+  authorId?: string;
 }
