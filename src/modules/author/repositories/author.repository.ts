@@ -35,6 +35,7 @@ export class AuthorRepository extends Repository<Author> {
       } else if (limit) {
         queryBuilder.take(limit);
       }
+      queryBuilder.orderBy('author.createdAt', 'DESC');
 
       const [authors, totalItems] = await queryBuilder.getManyAndCount();
 
@@ -61,12 +62,15 @@ export class AuthorRepository extends Repository<Author> {
   }
 
   async updateAuthorById(id: string, updateAuthorDto: UpdateAuthorDto): Promise<Author> {
-    const author = await this.getAuthorById(id);
+    const author = await this.preload({
+      id,
+      ...updateAuthorDto,
+    });
     if (!author) {
       throw new NotFoundException(`Author with ID ${id} not found`);
     }
-    Object.assign(author, updateAuthorDto);
-    return await this.save(author);
+    await this.save(author);
+    return author;
   }
 
   async deleteAuthorById(id: string): Promise<void> {
