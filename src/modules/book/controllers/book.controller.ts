@@ -11,6 +11,7 @@ import {
   Get,
   Query,
   ParseUUIDPipe,
+  HttpCode,
 } from '@nestjs/common';
 import { BookService } from '../services/book.service';
 import { CreateBookDto } from '../dtos/create-book.dto';
@@ -69,6 +70,7 @@ export class BookController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a book by ID' })
   @ApiParam({ name: 'id', type: String, description: 'Book ID (must be a valid UUID)' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Book deleted successfully' })
