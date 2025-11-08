@@ -3,6 +3,7 @@ import { CreateAuthorDto } from '../dtos/create-author.dto';
 import { AuthorRepository } from '../repositories/author.repository';
 import { AuthorResponseDto } from '../dtos/author-response.dto';
 import { plainToInstance } from 'class-transformer';
+import { UpdateAuthorDto } from '../dtos/update-author.dto';
 
 @Injectable()
 export class AuthorService {
@@ -59,6 +60,34 @@ export class AuthorService {
       });
     } catch (error) {
       this.logger.error('Error getting author', error);
+      throw error;
+    }
+  }
+
+  async updateAuthorById(id: string, updateAuthorDto: UpdateAuthorDto): Promise<AuthorResponseDto> {
+    this.logger.log('Updating author by id: ', id);
+
+    try {
+      const updatedAuthor = await this.authorRepository.updateAuthorById(id, updateAuthorDto);
+      this.logger.log('Author updated successfully: ', updatedAuthor.id);
+
+      return plainToInstance(AuthorResponseDto, updatedAuthor, {
+        excludeExtraneousValues: true,
+      });
+    } catch (error) {
+      this.logger.error('Error updating author', error);
+      throw error;
+    }
+  }
+
+  async deleteAuthorById(id: string): Promise<void> {
+    this.logger.log('Deleting author by id: ', id);
+
+    try {
+      await this.authorRepository.deleteAuthorById(id);
+      this.logger.log('Author deleted successfully: ', id);
+    } catch (error) {
+      this.logger.error('Error deleting author', error);
       throw error;
     }
   }
