@@ -1,10 +1,10 @@
-import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Post, UseInterceptors, ClassSerializerInterceptor, HttpStatus } from '@nestjs/common';
 import { AuthorService } from '../services/author.service';
-    import { CreateAuthorDto } from '../dtos/create-author.dto';
-    import { ValidationPipe } from '@nestjs/common';
-import { ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
-
+import { CreateAuthorDto } from '../dtos/create-author.dto';
+import { ApiOperation, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+@ApiTags('Authors')
 @Controller('authors')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
 
@@ -15,7 +15,7 @@ export class AuthorController {
     status: 200,
     description: 'Author successfully created.',
   })
-
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
   async createAuthor(@Body() createAuthorDto: CreateAuthorDto) {
     return this.authorService.createAuthor(createAuthorDto);
   }

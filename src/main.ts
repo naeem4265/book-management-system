@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { config } from 'dotenv';
 import { validateEnv } from './config/env.schema';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
@@ -24,6 +24,14 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
+  // Enable global validation
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+    }),
+  );
+
   // Swagger Configuration
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Book Management System API')
@@ -31,7 +39,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('authors')
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('swagger', app, document);
 
