@@ -3,25 +3,21 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthorModule } from './modules/author/author.module';
-import { ConfigModule } from '@nestjs/config';
-import { getDatabaseConfig } from './config/database.config';
-import { ConfigService } from '@nestjs/config';
-import { envValidationSchema } from './config/env.schema';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { getTypeOrmConfig } from '../config/database.config';
+import { envValidationSchema } from '../config/env.schema';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
       validationSchema: envValidationSchema,
-      validationOptions: {
-        allowUnknown: true,
-        abortEarly: true,
-      },
+      isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: getDatabaseConfig,
+      imports: [ConfigModule],
       inject: [ConfigService],
+      useFactory: getTypeOrmConfig,
     }),
     AuthorModule,
   ],
