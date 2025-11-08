@@ -9,12 +9,14 @@ import {
   Delete,
   Patch,
   Get,
+  Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { BookService } from '../services/book.service';
 import { CreateBookDto } from '../dtos/create-book.dto';
-import { ApiOperation, ApiBody, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
+import { ApiOperation, ApiBody, ApiResponse, ApiTags, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { UpdateBookDto } from '../dtos/update-book.dto';
+import { BookQueryDto } from '../dtos/book-query.dto';
 
 @ApiTags('Books')
 @Controller('books')
@@ -32,6 +34,14 @@ export class BookController {
   })
   async createBook(@Body() createBookDto: CreateBookDto) {
     return this.bookService.createBook(createBookDto);
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Get all books with pagination, search, and filtering' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
+  async getAllBooks(@Query() query: BookQueryDto) {
+    return this.bookService.getAllBooks(query);
   }
 
   @Get(':id')
