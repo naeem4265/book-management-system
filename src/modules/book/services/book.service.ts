@@ -1,4 +1,4 @@
-import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
 import { CreateBookDto } from '../dtos/create-book.dto';
 import { BookRepository } from '../repositories/book.repository';
 import { BookResponseDto } from '../dtos/book-response.dto';
@@ -47,7 +47,7 @@ export class BookService {
         if (pgError.code === '23505') {
           const errorDetail = pgError.detail || '';
           if (errorDetail.includes('isbn') || errorDetail.includes('ISBN')) {
-            throw new BadRequestException('A book with ISBN ' + createBookDto.isbn + ' already exists');
+            throw new ConflictException('A book with ISBN ' + createBookDto.isbn + ' already exists');
           }
         }
       }
@@ -124,7 +124,7 @@ export class BookService {
         if (pgError.code === '23505') {
           const errorDetail = pgError.detail || '';
           if (errorDetail.includes('isbn') || errorDetail.includes('ISBN')) {
-            throw new BadRequestException('A book with ISBN ' + updateBookDto.isbn + ' already exists');
+            throw new ConflictException('A book with ISBN ' + updateBookDto.isbn + ' already exists');
           }
         }
       }
