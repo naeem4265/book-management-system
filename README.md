@@ -124,25 +124,11 @@ The Swagger UI provides:
 ```bash
 # Run all unit tests
 npm run test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run tests with coverage
-npm run test:cov
 ```
 
 ### End-to-End Tests
 
-Before running e2e tests, ensure you have a test database configured:
-
 ```bash
-# Create test database
-createdb book_management_test
-
-# Update .env.test or set environment variables
-export DB_NAME=book_management_test
-
 # Run e2e tests
 npm run test:e2e
 ```
@@ -269,43 +255,10 @@ Common HTTP status codes:
 
 ## Troubleshooting
 
-### Database Connection Issues
-
-```bash
-# Check if PostgreSQL is running
-sudo systemctl status postgresql  # Linux
-brew services list  # macOS
-
-# Test database connection
-psql -U postgres -d book_management -h localhost
-
-# Check if database exists
-psql -U postgres -l
-```
-
 ### Port Already in Use
 
 ```bash
 # Find process using port 3000
-lsof -i :3000  # macOS/Linux
-netstat -ano | findstr :3000  # Windows
-
-# Kill the process or change APP_PORT in .env.development
+lsof -i :3000  #Linux
+kill -9 pid # Kill the process
 ```
-
-### Migration Issues
-
-```bash
-# Check migration status
-psql -U postgres -d book_management -c "SELECT * FROM migrations;"
-
-# If migrations are stuck, you may need to manually fix the migrations table
-```
-
-## License
-
-This project is licensed under the MIT License.
-
-## Support
-
-For issues and questions, please open an issue on the repository.
