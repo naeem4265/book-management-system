@@ -209,9 +209,7 @@ describe('AuthorService', () => {
       repository.getAuthorById.mockResolvedValue(null);
 
       await expect(service.getAuthorById(authorId)).rejects.toThrow(NotFoundException);
-      await expect(service.getAuthorById(authorId)).rejects.toThrow(
-        'Author with id non-existent-id not found',
-      );
+      await expect(service.getAuthorById(authorId)).rejects.toThrow('Author with id non-existent-id not found');
       expect(repository.getAuthorById).toHaveBeenCalledWith(authorId);
     });
 
@@ -260,9 +258,7 @@ describe('AuthorService', () => {
       const error = new Error('Database error');
       repository.updateAuthorById.mockRejectedValue(error);
 
-      await expect(service.updateAuthorById(authorId, updateAuthorDto)).rejects.toThrow(
-        'Database error',
-      );
+      await expect(service.updateAuthorById(authorId, updateAuthorDto)).rejects.toThrow('Database error');
       expect(repository.updateAuthorById).toHaveBeenCalledWith(authorId, updateAuthorDto);
     });
   });

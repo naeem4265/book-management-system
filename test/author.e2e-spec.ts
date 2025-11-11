@@ -25,7 +25,7 @@ describe('AuthorController (e2e)', () => {
       }).compile();
 
       app = moduleFixture.createNestApplication();
-      
+
       app.useGlobalPipes(
         new ValidationPipe({
           whitelist: true,
@@ -49,11 +49,8 @@ describe('AuthorController (e2e)', () => {
   afterAll(async () => {
     if (app && createdAuthorId) {
       try {
-        await request(app.getHttpServer())
-          .delete(`/authors/${createdAuthorId}`)
-          .expect(204);
-      } catch (error) {
-      }
+        await request(app.getHttpServer()).delete(`/authors/${createdAuthorId}`).expect(204);
+      } catch (error) {}
     }
     if (app) {
       await app.close();
@@ -73,10 +70,7 @@ describe('AuthorController (e2e)', () => {
         birthDate: '1775-12-16',
       };
 
-      const response = await request(app.getHttpServer())
-        .post('/authors')
-        .send(createAuthorDto)
-        .expect(200);
+      const response = await request(app.getHttpServer()).post('/authors').send(createAuthorDto).expect(200);
 
       expect(response.body).toHaveProperty('id');
       expect(response.body.firstName).toBe(createAuthorDto.firstName);
@@ -96,10 +90,7 @@ describe('AuthorController (e2e)', () => {
         lastName: 'Austen',
       };
 
-      await request(app.getHttpServer())
-        .post('/authors')
-        .send(invalidDto)
-        .expect(400);
+      await request(app.getHttpServer()).post('/authors').send(invalidDto).expect(400);
     });
 
     it('should fail validation when firstName is empty', async () => {
@@ -111,10 +102,7 @@ describe('AuthorController (e2e)', () => {
         lastName: 'Austen',
       };
 
-      await request(app.getHttpServer())
-        .post('/authors')
-        .send(invalidDto)
-        .expect(400);
+      await request(app.getHttpServer()).post('/authors').send(invalidDto).expect(400);
     });
   });
 
@@ -125,9 +113,7 @@ describe('AuthorController (e2e)', () => {
       }
       expect(createdAuthorId).toBeDefined();
 
-      const response = await request(app.getHttpServer())
-        .get(`/authors/${createdAuthorId}`)
-        .expect(200);
+      const response = await request(app.getHttpServer()).get(`/authors/${createdAuthorId}`).expect(200);
 
       expect(response.body).toHaveProperty('id', createdAuthorId);
       expect(response.body.firstName).toBe('Jane');
@@ -143,9 +129,7 @@ describe('AuthorController (e2e)', () => {
       }
       const nonExistentId = '00000000-0000-0000-0000-000000000000';
 
-      await request(app.getHttpServer())
-        .get(`/authors/${nonExistentId}`)
-        .expect(404);
+      await request(app.getHttpServer()).get(`/authors/${nonExistentId}`).expect(404);
     });
 
     it('should return 400 for invalid UUID format', async () => {
@@ -154,9 +138,7 @@ describe('AuthorController (e2e)', () => {
       }
       const invalidId = 'invalid-uuid';
 
-      await request(app.getHttpServer())
-        .get(`/authors/${invalidId}`)
-        .expect(400);
+      await request(app.getHttpServer()).get(`/authors/${invalidId}`).expect(400);
     });
   });
 
@@ -172,31 +154,21 @@ describe('AuthorController (e2e)', () => {
         birthDate: '1812-02-07',
       };
 
-      const createResponse = await request(app.getHttpServer())
-        .post('/authors')
-        .send(createAuthorDto)
-        .expect(200);
+      const createResponse = await request(app.getHttpServer()).post('/authors').send(createAuthorDto).expect(200);
 
       const authorId = createResponse.body.id;
       expect(authorId).toBeDefined();
 
-      const getResponse = await request(app.getHttpServer())
-        .get(`/authors/${authorId}`)
-        .expect(200);
+      const getResponse = await request(app.getHttpServer()).get(`/authors/${authorId}`).expect(200);
 
       expect(getResponse.body.id).toBe(authorId);
       expect(getResponse.body.firstName).toBe(createAuthorDto.firstName);
       expect(getResponse.body.lastName).toBe(createAuthorDto.lastName);
       expect(getResponse.body.bio).toBe(createAuthorDto.bio);
 
-      await request(app.getHttpServer())
-        .delete(`/authors/${authorId}`)
-        .expect(204);
+      await request(app.getHttpServer()).delete(`/authors/${authorId}`).expect(204);
 
-      await request(app.getHttpServer())
-        .get(`/authors/${authorId}`)
-        .expect(404);
+      await request(app.getHttpServer()).get(`/authors/${authorId}`).expect(404);
     });
   });
 });
-
