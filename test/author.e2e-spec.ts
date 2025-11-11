@@ -1,4 +1,3 @@
-// Set up test environment variables BEFORE any imports
 process.env.NODE_ENV = process.env.NODE_ENV || 'test';
 process.env.DB_HOST = process.env.DB_HOST || 'localhost';
 process.env.DB_PORT = process.env.DB_PORT || '5432';
@@ -27,7 +26,6 @@ describe('AuthorController (e2e)', () => {
 
       app = moduleFixture.createNestApplication();
       
-      // Enable global validation pipe (same as in main.ts)
       app.useGlobalPipes(
         new ValidationPipe({
           whitelist: true,
@@ -38,43 +36,35 @@ describe('AuthorController (e2e)', () => {
       await app.init();
       databaseAvailable = true;
     } catch (error) {
-      // If database connection fails, mark as unavailable
       if (error.message && error.message.includes('password authentication failed')) {
-        console.warn('\n⚠️  Database connection failed. E2E tests require a running PostgreSQL database.');
-        console.warn('   Please ensure:');
-        console.warn('   1. PostgreSQL is running');
-        console.warn('   2. Database credentials are correct (set DB_PASSWORD env var or .env.test file)');
-        console.warn('   3. Test database exists: book_management_test');
-        console.warn('   Skipping E2E tests...\n');
+        console.warn('\nDatabase connection failed. E2E tests require a running PostgreSQL database.');
+        console.warn('Skipping E2E tests...\n');
         databaseAvailable = false;
       } else {
         throw error;
       }
     }
-  }, 30000); // Increase timeout to 30 seconds for database connection
+  }, 30000);
 
   afterAll(async () => {
-    // Clean up: delete the created author if it exists
     if (app && createdAuthorId) {
       try {
         await request(app.getHttpServer())
           .delete(`/authors/${createdAuthorId}`)
           .expect(204);
       } catch (error) {
-        // Ignore cleanup errors
       }
     }
     if (app) {
       await app.close();
     }
-    // Give Jest time to clean up
     await new Promise((resolve) => setTimeout(resolve, 500));
   });
 
   describe('POST /authors - Create Author', () => {
     it('should create an author successfully', async () => {
       if (!databaseAvailable || !app) {
-        return; // Skip test if database is not available
+        return;
       }
       const createAuthorDto = {
         firstName: 'Jane',
@@ -95,17 +85,15 @@ describe('AuthorController (e2e)', () => {
       expect(response.body).toHaveProperty('createdAt');
       expect(response.body).toHaveProperty('updatedAt');
 
-      // Store the created author ID for cleanup and retrieval test
       createdAuthorId = response.body.id;
     });
 
     it('should fail validation when required fields are missing', async () => {
       if (!databaseAvailable || !app) {
-        return; // Skip test if database is not available
+        return;
       }
       const invalidDto = {
         lastName: 'Austen',
-        // Missing firstName
       };
 
       await request(app.getHttpServer())
@@ -116,7 +104,7 @@ describe('AuthorController (e2e)', () => {
 
     it('should fail validation when firstName is empty', async () => {
       if (!databaseAvailable || !app) {
-        return; // Skip test if database is not available
+        return;
       }
       const invalidDto = {
         firstName: '',
@@ -133,9 +121,8 @@ describe('AuthorController (e2e)', () => {
   describe('GET /authors/:id - Get Author by ID', () => {
     it('should retrieve the created author by ID', async () => {
       if (!databaseAvailable || !app) {
-        return; // Skip test if database is not available
+        return;
       }
-      // This test depends on the author created in the previous test
       expect(createdAuthorId).toBeDefined();
 
       const response = await request(app.getHttpServer())
@@ -152,7 +139,7 @@ describe('AuthorController (e2e)', () => {
 
     it('should return 404 when author does not exist', async () => {
       if (!databaseAvailable || !app) {
-        return; // Skip test if database is not available
+        return;
       }
       const nonExistentId = '00000000-0000-0000-0000-000000000000';
 
@@ -163,7 +150,7 @@ describe('AuthorController (e2e)', () => {
 
     it('should return 400 for invalid UUID format', async () => {
       if (!databaseAvailable || !app) {
-        return; // Skip test if database is not available
+        return;
       }
       const invalidId = 'invalid-uuid';
 
@@ -176,9 +163,8 @@ describe('AuthorController (e2e)', () => {
   describe('E2E Flow: Create and Retrieve Author', () => {
     it('should create an author and then retrieve it successfully', async () => {
       if (!databaseAvailable || !app) {
-        return; // Skip test if database is not available
+        return;
       }
-      // Step 1: Create an author
       const createAuthorDto = {
         firstName: 'Charles',
         lastName: 'Dickens',
@@ -194,23 +180,19 @@ describe('AuthorController (e2e)', () => {
       const authorId = createResponse.body.id;
       expect(authorId).toBeDefined();
 
-      // Step 2: Retrieve the created author
       const getResponse = await request(app.getHttpServer())
         .get(`/authors/${authorId}`)
         .expect(200);
 
-      // Step 3: Verify the retrieved data matches the created data
       expect(getResponse.body.id).toBe(authorId);
       expect(getResponse.body.firstName).toBe(createAuthorDto.firstName);
       expect(getResponse.body.lastName).toBe(createAuthorDto.lastName);
       expect(getResponse.body.bio).toBe(createAuthorDto.bio);
 
-      // Step 4: Clean up - delete the author
       await request(app.getHttpServer())
         .delete(`/authors/${authorId}`)
         .expect(204);
 
-      // Step 5: Verify the author is deleted
       await request(app.getHttpServer())
         .get(`/authors/${authorId}`)
         .expect(404);

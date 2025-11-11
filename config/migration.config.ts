@@ -1,4 +1,3 @@
-// src/config/typeorm.config.ts
 import { DataSource } from 'typeorm';
 import * as path from 'path';
 import * as dotenv from 'dotenv';

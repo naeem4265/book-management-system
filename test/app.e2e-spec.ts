@@ -1,4 +1,3 @@
-// Set up test environment variables BEFORE any imports
 process.env.NODE_ENV = process.env.NODE_ENV || 'test';
 process.env.DB_HOST = process.env.DB_HOST || 'localhost';
 process.env.DB_PORT = process.env.DB_PORT || '5432';
@@ -28,20 +27,15 @@ describe('AppController (e2e)', () => {
       await app.init();
       databaseAvailable = true;
     } catch (error) {
-      // If database connection fails, mark as unavailable
       if (error.message && error.message.includes('password authentication failed')) {
-        console.warn('\n⚠️  Database connection failed. E2E tests require a running PostgreSQL database.');
-        console.warn('   Please ensure:');
-        console.warn('   1. PostgreSQL is running');
-        console.warn('   2. Database credentials are correct (set DB_PASSWORD env var or .env.test file)');
-        console.warn('   3. Test database exists: book_management_test');
-        console.warn('   Skipping E2E tests...\n');
+        console.warn('\nDatabase connection failed. E2E tests require a running PostgreSQL database.');
+        console.warn('Skipping E2E tests...\n');
         databaseAvailable = false;
       } else {
         throw error;
       }
     }
-  }, 30000); // Increase timeout to 30 seconds for database connection
+  }, 30000);
 
   afterEach(async () => {
     if (app) {
@@ -49,10 +43,10 @@ describe('AppController (e2e)', () => {
     }
   });
 
-  it('/ (GET)', () => {
+  it('/ (GET)', async () => {
     if (!databaseAvailable || !app) {
-      return; // Skip test if database is not available
+      return;
     }
-    return request(app.getHttpServer()).get('/').expect(200).expect('Hello World!');
+    await request(app.getHttpServer()).get('/').expect(200).expect('Hello World!');
   });
 });

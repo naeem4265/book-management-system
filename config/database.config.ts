@@ -17,7 +17,6 @@ export const getTypeOrmConfig = (configService: ConfigService): TypeOrmModuleOpt
   migrationsTableName: 'migrations'
 });
 
-// For TypeORM CLI migrations
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
 
